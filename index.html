@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김민희 — 국가과제 관리</title>
+  <meta name="description" content="국가과제 관리 — 협약, 정산. 국가연구개발과제를 관리하는 김민희입니다." />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f4f6fa;
+      --surface: #ffffff;
+      --border: #dde3ee;
+      --text: #1b2540;
+      --text-soft: #5a6684;
+      --accent: #1e3a6e;
+      --accent-soft: rgba(30, 58, 110, 0.09);
+      --shadow: 0 1px 3px rgba(27, 37, 64, 0.07), 0 8px 24px rgba(27, 37, 64, 0.05);
+      --radius: 16px;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0c1526;
+      --bg-soft: #111d33;
+      --surface: #13203a;
+      --border: #24365a;
+      --text: #e6ebf5;
+      --text-soft: #9aa8c6;
+      --accent: #7ea2e0;
+      --accent-soft: rgba(126, 162, 224, 0.15);
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0c1526;
+        --bg-soft: #111d33;
+        --surface: #13203a;
+        --border: #24365a;
+        --text: #e6ebf5;
+        --text-soft: #9aa8c6;
+        --accent: #7ea2e0;
+        --accent-soft: rgba(126, 162, 224, 0.15);
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+        "Malgun Gothic", "Noto Sans KR", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Header / theme toggle ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: saturate(180%) blur(12px);
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    /* ── Brand / logo ── */
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      font-size: 1.05rem;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    :root[data-theme="dark"] .logo { color: #0c1526; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .logo { color: #0c1526; }
+    }
+
+    /* ── Menu ── */
+    .menu {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+    }
+    .menu a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+    .menu a:hover { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+    .theme-toggle:hover { background: var(--bg-soft); transform: translateY(-1px); }
+
+    /* ── Hero ── */
+    .hero { padding: 88px 0 64px; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .hero .lede {
+      font-size: clamp(1.1rem, 3vw, 1.35rem);
+      color: var(--text-soft);
+      max-width: 34ch;
+    }
+
+    /* ── Sections ── */
+    section { padding: 40px 0; }
+    .section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 24px;
+    }
+
+    /* ── Focus cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+      box-shadow: var(--shadow);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .card .icon { font-size: 1.6rem; margin-bottom: 14px; display: block; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .card p { font-size: 0.94rem; color: var(--text-soft); }
+
+    /* ── Project card ── */
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 16px;
+      text-decoration: none;
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .card-link .arrow { transition: transform 0.2s ease; }
+    .card:hover .card-link .arrow { transform: translateX(3px); }
+
+    /* ── Contact ── */
+    .links { display: flex; flex-wrap: wrap; gap: 14px; }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .link-btn:hover { background: var(--accent-soft); border-color: var(--accent); transform: translateY(-2px); }
+    .link-btn .ic { font-size: 1.15rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      margin-top: 40px;
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .hero { padding: 60px 0 44px; }
+      .links { flex-direction: column; }
+      .link-btn { width: 100%; justify-content: center; }
+      .menu { gap: 16px; }
+      .menu a { font-size: 0.86rem; }
+      .nav-right { gap: 12px; }
+      .brand span:not(.logo) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#top">
+        <span class="logo">MK</span>
+        <span>김민희</span>
+      </a>
+      <div class="nav-right">
+        <nav class="menu">
+          <a href="#focus">관심사</a>
+          <a href="#projects">프로젝트</a>
+          <a href="#contact">연락처</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="다크모드 전환" title="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="top">
+      <span class="eyebrow">National R&amp;D · Project Management</span>
+      <h1>안녕하세요,<br />김민희입니다.</h1>
+      <p class="lede">국가과제 관리를 담당합니다.</p>
+    </section>
+
+    <section id="focus">
+      <p class="section-title">하는 일 · 관심사</p>
+      <div class="cards">
+        <div class="card">
+          <span class="icon">📋</span>
+          <h3>과제 관리</h3>
+          <p>국가연구개발과제의 전 주기를 챙기며 일정과 산출물을 관리합니다.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🤝</span>
+          <h3>협약</h3>
+          <p>과제 협약 체결과 변경, 관련 행정 절차를 정확하게 처리합니다.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🧾</span>
+          <h3>정산</h3>
+          <p>연구비 집행 점검과 정산 자료 작성으로 예산을 투명하게 관리합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <p class="section-title">주요 프로젝트</p>
+      <div class="cards">
+        <div class="card">
+          <span class="icon">🗂️</span>
+          <h3>국가R&amp;D 과제 총괄 관리</h3>
+          <p>다부처 연구개발과제의 협약·일정·산출물을 통합 관리한 사례.</p>
+          <a class="card-link" href="#">자세히 보기 <span class="arrow">→</span></a>
+        </div>
+        <div class="card">
+          <span class="icon">🤝</span>
+          <h3>협약 체결·변경 프로세스 개선</h3>
+          <p>협약 행정 절차를 표준화해 처리 기간을 단축한 프로젝트.</p>
+          <a class="card-link" href="#">자세히 보기 <span class="arrow">→</span></a>
+        </div>
+        <div class="card">
+          <span class="icon">🧾</span>
+          <h3>연구비 정산 체계 정비</h3>
+          <p>집행 점검과 정산 자료 작성 흐름을 정비해 오류를 줄인 사례.</p>
+          <a class="card-link" href="#">자세히 보기 <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <p class="section-title">연락처 · 링크</p>
+      <div class="links">
+        <a class="link-btn" href="mailto:minhee.kim@ineeji.com">
+          <span class="ic">✉️</span> minhee.kim@ineeji.com
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    © <span id="year"></span> 김민희 · Built with plain HTML &amp; CSS
+  </footer>
+
+  <script>
+    // ── 테마 토글 (초기값: 저장된 값 → 시스템 설정) ──
+    const root = document.documentElement;
+    const toggle = document.getElementById("themeToggle");
+
+    function currentIsDark() {
+      const t = root.getAttribute("data-theme");
+      if (t) return t === "dark";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    function syncIcon() {
+      toggle.textContent = currentIsDark() ? "☀️" : "🌙";
+    }
+
+    const saved = localStorage.getItem("theme");
+    if (saved) root.setAttribute("data-theme", saved);
+    syncIcon();
+
+    toggle.addEventListener("click", () => {
+      const next = currentIsDark() ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      syncIcon();
+    });
+
+    // ── 현재 연도 ──
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
