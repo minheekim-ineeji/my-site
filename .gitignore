@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+
+# 환경변수 (자격 증명이 들어가므로 절대 커밋 금지)
+.env
+.env.*
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db

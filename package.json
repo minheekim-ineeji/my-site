@@ -1,0 +1,9 @@
+{
+  "name": "my-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "김민희 개인 홈페이지 + Google Sheets 연동 서버리스 함수",
+  "dependencies": {
+    "google-auth-library": "^9.14.1"
+  }
+}

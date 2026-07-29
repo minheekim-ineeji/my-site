@@ -206,6 +206,36 @@
     .card-link .arrow { transition: transform 0.2s ease; }
     .card:hover .card-link .arrow { transform: translateX(3px); }
 
+    /* ── Projects table (Google Sheets 렌더) ── */
+    .muted { color: var(--text-soft); font-size: 0.94rem; }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background: var(--surface);
+    }
+    table.projects { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+    table.projects th, table.projects td {
+      text-align: left;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    table.projects thead th {
+      background: var(--bg-soft);
+      color: var(--text-soft);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    table.projects tbody tr:last-child td { border-bottom: none; }
+    table.projects tbody tr { transition: background 0.15s ease; }
+    table.projects tbody tr:hover td { background: var(--accent-soft); }
+    table.projects a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    table.projects a:hover { text-decoration: underline; }
+
     /* ── Contact ── */
     .links { display: flex; flex-wrap: wrap; gap: 14px; }
     .link-btn {
@@ -294,25 +324,8 @@
 
     <section id="projects">
       <p class="section-title">주요 프로젝트</p>
-      <div class="cards">
-        <div class="card">
-          <span class="icon">🗂️</span>
-          <h3>국가R&amp;D 과제 총괄 관리</h3>
-          <p>다부처 연구개발과제의 협약·일정·산출물을 통합 관리한 사례.</p>
-          <a class="card-link" href="#">자세히 보기 <span class="arrow">→</span></a>
-        </div>
-        <div class="card">
-          <span class="icon">🤝</span>
-          <h3>협약 체결·변경 프로세스 개선</h3>
-          <p>협약 행정 절차를 표준화해 처리 기간을 단축한 프로젝트.</p>
-          <a class="card-link" href="#">자세히 보기 <span class="arrow">→</span></a>
-        </div>
-        <div class="card">
-          <span class="icon">🧾</span>
-          <h3>연구비 정산 체계 정비</h3>
-          <p>집행 점검과 정산 자료 작성 흐름을 정비해 오류를 줄인 사례.</p>
-          <a class="card-link" href="#">자세히 보기 <span class="arrow">→</span></a>
-        </div>
+      <div id="projects-content">
+        <p class="muted" id="projects-status">프로젝트를 불러오는 중…</p>
       </div>
     </section>
 
@@ -357,6 +370,78 @@
 
     // ── 현재 연도 ──
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ── 프로젝트 목록 로드 (/api/sheet → Google Sheets) ──
+    // rows[0] 은 제목행, 이후는 데이터행. textContent 로만 렌더해 안전하게 처리.
+    (async function loadProjects() {
+      const status = document.getElementById("projects-status");
+      const content = document.getElementById("projects-content");
+
+      // http/https 로 서빙될 때만 API 호출 (file:// 로컬 미리보기에서는 안내만)
+      if (location.protocol === "file:") {
+        status.textContent = "로컬 미리보기에서는 프로젝트 데이터를 불러올 수 없습니다. (배포 환경에서 표시됩니다)";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/sheet");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const rows = Array.isArray(data.rows) ? data.rows : [];
+
+        if (rows.length < 2) {
+          status.textContent = "표시할 프로젝트가 없습니다.";
+          return;
+        }
+
+        const [header, ...body] = rows;
+
+        const table = document.createElement("table");
+        table.className = "projects";
+
+        const thead = document.createElement("thead");
+        const htr = document.createElement("tr");
+        header.forEach((cell) => {
+          const th = document.createElement("th");
+          th.textContent = cell;
+          htr.appendChild(th);
+        });
+        thead.appendChild(htr);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        const urlRe = /^https?:\/\//i;
+        body.forEach((row) => {
+          const tr = document.createElement("tr");
+          for (let i = 0; i < header.length; i++) {
+            const td = document.createElement("td");
+            const val = row[i] != null ? String(row[i]) : "";
+            if (urlRe.test(val)) {
+              const a = document.createElement("a");
+              a.href = val;
+              a.target = "_blank";
+              a.rel = "noopener";
+              a.textContent = "바로가기 →";
+              td.appendChild(a);
+            } else {
+              td.textContent = val;
+            }
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        const wrap = document.createElement("div");
+        wrap.className = "table-wrap";
+        wrap.appendChild(table);
+
+        content.innerHTML = "";
+        content.appendChild(wrap);
+      } catch (err) {
+        status.textContent = "프로젝트를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+      }
+    })();
   </script>
 </body>
 </html>
